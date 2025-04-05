@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meal Planner</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>What's in Your Kitchen?</h1>
+
+  <h3>Select Ingredients:</h3>
+  <label><input type="checkbox" value="chicken" class="ingredient"> Chicken</label>
+  <label><input type="checkbox" value="rice" class="ingredient"> Rice</label>
+  <label><input type="checkbox" value="broccoli" class="ingredient"> Broccoli</label>
+
+  <h3>Available Cooking Tools:</h3>
+  <label><input type="checkbox" value="oven" class="equipment"> Oven</label>
+  <label><input type="checkbox" value="blender" class="equipment"> Blender</label>
+
+  <h3>Dietary Preferences:</h3>
+  <label><input type="checkbox" value="vegan" class="diet"> Vegan</label>
+  <label><input type="checkbox" value="meal-prep" class="diet"> Meal Prep Friendly</label>
+
+  <br><br>
+  <button onclick="findRecipes()">Find Recipes</button>
+
+  <h2>Suggested Recipes:</h2>
+  <div id="results"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
