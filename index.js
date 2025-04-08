@@ -21,6 +21,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 app.post('/get-recipes', async (req, res) => {
   const { ingredients } = req.body;
 
+
   // Validate input
   if (!ingredients || ingredients.trim() === '') {
     return res.status(400).json({ error: 'Ingredients are required' });
@@ -36,7 +37,12 @@ app.post('/get-recipes', async (req, res) => {
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' }); // Use Gemini model
 
     // Combine system instruction and user query into a single string
-    const prompt = `You are a helpful assistant that suggests recipes based on ingredients. I have the following ingredients: ${ingredients}. What can I cook?`;
+    const prompt = `You are a professional recipe assistant. Based on the following ingredients: ${ingredients}, generate 2–3 full recipes.
+Each recipe must include:
+- A title
+- A short ingredient list
+- 3–6 clear and concise cooking steps
+Do not ask questions or give suggestions. Just provide realistic, practical recipes that someone could follow at home.`;
 
     const result = await model.generateContent(prompt);
     const reply = result.response.text();
@@ -53,5 +59,5 @@ app.post('/get-recipes', async (req, res) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -10,7 +10,12 @@
       padding: 0;
       box-sizing: border-box;
     }
-
+    .filter-options button.active {
+  background-color: #ff9800;
+  color: white;
+  border-color: #ff9800;
+  box-shadow: 0 0 5px #ff9800;
+}
     body {
       font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
       background: linear-gradient(135deg, #fff7e6 0%, #ffe8cc 100%);
@@ -255,11 +260,11 @@
     <section class="filters">
       <h3>Filter Your Preferences</h3>
       <div class="filter-options">
-        <button>Low-Calorie</button>
-        <button>High-Protein</button>
-        <button>Vegetarian</button>
-        <button>Quick Meals</button>
-      </div>
+        <button data-filter="Low-Calorie">Low-Calorie</button>
+        <button data-filter="High-Protein">High-Protein</button>
+        <button data-filter="Vegetarian">Vegetarian</button>
+        <button data-filter="Quick Meals">Quick Meals</button>
+      </div>      
     </section>
 
     <!-- Recipes Section -->
@@ -276,8 +281,8 @@
     <!-- Food Images Section -->
     <section class="food-images">
       <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop" alt="Pasta Dish">
-      <img src="https://images.unsplash.com/photo-1513104890138-7c749659d6e1?q=80&w=2070&auto=format&fit=crop" alt="Salad">
-      <img src="https://images.unsplash.com/photo-1565299624946-baccd9097192?q=80&w=2070&auto=format&fit=crop" alt="Grilled Chicken">
+      <img src="https://i2.wp.com/www.downshiftology.com/wp-content/uploads/2019/04/Cobb-Salad-4-1-1024x1536.jpg" alt="Salad">
+      <img src="https://www.southernliving.com/thmb/V_YlWZZX4L-SUWSyV1bE2Fb6g4M=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/27737_SupT_spinbottl_008-1c7b541f7a9f473cb064d686546231d7.jpg" alt="Grilled Chicken">
     </section>
   </main>
 
@@ -289,34 +294,46 @@
 
   <!-- JavaScript -->
   <script>
-    (async () => {
-      document.getElementById("ingredients-form").addEventListener("submit", async function (e) {
-        e.preventDefault();
-        const ingredients = document.getElementById("ingredients").value.trim();
-        const resultDiv = document.getElementById("recipes-result");
-        resultDiv.innerText = '';
-        resultDiv.classList.remove('error');
-
-        try {
-          const response = await fetch('/get-recipes', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ingredients: ingredients || '' })
-          });
-          const data = await response.json();
-          if (response.ok) {
-            resultDiv.innerText = data.recipes || 'No recipes returned';
-          } else {
-            resultDiv.innerText = data.error || 'An unexpected error occurred';
-            resultDiv.classList.add('error');
-          }
-        } catch (error) {
-          console.error('Fetch error:', error);
-          resultDiv.innerText = 'Failed to connect to the server: ' + error.message;
+    let selectedFilter = "";
+  
+    // Toggle button active state
+    document.querySelectorAll(".filter-options button").forEach(btn => {
+      btn.addEventListener("click", function () {
+        document.querySelectorAll(".filter-options button").forEach(b => b.classList.remove("active"));
+        selectedFilter = this.dataset.filter;
+        this.classList.add("active");
+      });
+    });
+  
+    document.getElementById("ingredients-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const ingredients = document.getElementById("ingredients").value.trim();
+      const resultDiv = document.getElementById("recipes-result");
+      resultDiv.innerText = '';
+      resultDiv.classList.remove('error');
+  
+      try {
+        const response = await fetch('/get-recipes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ingredients: ingredients || '',
+            filter: selectedFilter
+          })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          resultDiv.innerText = data.recipes || 'No recipes returned';
+        } else {
+          resultDiv.innerText = data.error || 'An unexpected error occurred';
           resultDiv.classList.add('error');
         }
-      });
-    })();
-  </script>
+      } catch (error) {
+        console.error('Fetch error:', error);
+        resultDiv.innerText = 'Failed to connect to the server: ' + error.message;
+        resultDiv.classList.add('error');
+      }
+    });
+  </script>  
 </body>
 </html>
